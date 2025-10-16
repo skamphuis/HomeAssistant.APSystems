@@ -12,6 +12,34 @@ A Home Assistant integration for APSystems solar inverters using the APSystems O
 
 ## Installation
 
+### Method 1: HACS (Recommended)
+
+1. **Install HACS** (if not already installed):
+   - Go to [HACS Installation](https://hacs.xyz/docs/installation/installation/)
+   - Follow the installation instructions for your Home Assistant setup
+
+2. **Add Custom Repository**:
+   - Open HACS → Integrations
+   - Click the three dots menu (⋮) → Custom repositories
+   - Add repository URL: `https://github.com/yourusername/HomeAssistant.APSystems`
+   - Set Category to "Integration"
+   - Click "Add"
+
+3. **Install Integration**:
+   - Search for "APSystems API" in HACS
+   - Click "Download" to install
+   - Restart Home Assistant
+
+4. **Configure Integration**:
+   - Go to Settings > Devices & Services > Add Integration
+   - Search for "APSystems API" and add it
+   - Enter your API credentials:
+     - **App ID**: Your APSystems API App ID
+     - **App Secret**: Your APSystems API App Secret  
+     - **System ID**: Your APSystems system ID
+
+### Method 2: Manual Installation
+
 1. Copy the `custom_components/apsystems` folder to your Home Assistant `custom_components` directory
 2. Restart Home Assistant
 3. Go to Settings > Devices & Services > Add Integration
