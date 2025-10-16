@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "APSystems OpenAPI",
+        "description": "Enter your APSystems OpenAPI credentials",
+        "data": {
+          "username": "App ID",
+          "password": "App Secret",
+          "system_id": "System ID"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to APSystems API",
+      "invalid_auth": "Invalid authentication credentials",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "System is already configured"
+    }
+  }
+}
