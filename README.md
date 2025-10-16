@@ -1,69 +1,152 @@
 # APSystems OpenAPI Integration for Home Assistant
 
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![License][license-shield]](LICENSE)
+[![hacs][hacsbadge]][hacs]
+
 A custom integration for Home Assistant to monitor APSystems solar inverters using the APSystems OpenAPI.
 
-## Features
+**Monitor your solar production in real-time with Home Assistant!** ☀️
 
-- Monitor real-time power generation
-- Track daily and lifetime energy production
-- Easy configuration through Home Assistant UI
-- Automatic updates every 5 minutes
-- Support for multiple sensor types:
-  - Current Power (W)
-  - Today Energy (kWh)
-  - Lifetime Energy (kWh)
-  - Max Power (W)
+[releases-shield]: https://img.shields.io/github/release/skamphuis/HomeAssistant.APSystems.svg?style=for-the-badge
+[releases]: https://github.com/skamphuis/HomeAssistant.APSystems/releases
+[commits-shield]: https://img.shields.io/github/commit-activity/y/skamphuis/HomeAssistant.APSystems.svg?style=for-the-badge
+[commits]: https://github.com/skamphuis/HomeAssistant.APSystems/commits/main
+[license-shield]: https://img.shields.io/github/license/skamphuis/HomeAssistant.APSystems.svg?style=for-the-badge
+[hacs]: https://github.com/hacs/integration
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 
-## Installation
+## ⚡ Features
+
+- 📊 **Real-time monitoring** - Live power generation data
+- 📈 **Energy tracking** - Daily and lifetime energy production
+- ⚙️ **Easy setup** - UI-based configuration flow
+- 🔄 **Automatic updates** - Data refreshes every 5 minutes
+- 📱 **Energy Dashboard** - Native integration with Home Assistant Energy
+- 🎨 **Beautiful sensors** - Four sensor types with proper device classes
+
+### Available Sensors
+
+| Sensor | Description | Unit | Device Class |
+|--------|-------------|------|--------------|
+| **Current Power** | Real-time power generation | W | power |
+| **Today Energy** | Energy generated today | kWh | energy |
+| **Lifetime Energy** | Total energy generated | kWh | energy |
+| **Max Power** | System maximum capacity | W | power |
+
+## 🚀 Quick Start
+
+Want to get started right away? Check out the [**Quick Start Guide**](QUICKSTART.md)!
+
+### Prerequisites
+
+- Home Assistant 2023.1.0 or newer
+- APSystems solar inverter with EMA monitoring
+- APSystems OpenAPI credentials (App ID, App Secret, System ID)
+
+> **Need API credentials?** See the [Quick Start Guide](QUICKSTART.md#getting-api-credentials) for instructions on obtaining them.
+
+## 📦 Installation
 
 ### HACS (Recommended)
 
-1. Add this repository to HACS as a custom repository
-2. Search for "APSystems OpenAPI" in HACS
-3. Click "Install"
-4. Restart Home Assistant
+1. Open HACS in Home Assistant
+2. Go to "Integrations" 
+3. Click "⋮" → "Custom repositories"
+4. Add repository: `https://github.com/skamphuis/HomeAssistant.APSystems`
+5. Category: "Integration"
+6. Search for "APSystems OpenAPI" and install
+7. Restart Home Assistant
 
 ### Manual Installation
 
-1. Copy the `custom_components/apsystems_openapi` directory to your Home Assistant `custom_components` directory
-2. Restart Home Assistant
+1. Download the [latest release](https://github.com/skamphuis/HomeAssistant.APSystems/releases)
+2. Copy `custom_components/apsystems_openapi` to your `custom_components` directory
+3. Restart Home Assistant
 
-## Configuration
+For detailed instructions, see [INSTALLATION.md](INSTALLATION.md).
 
-1. Go to **Configuration** → **Integrations**
-2. Click the **+ Add Integration** button
-3. Search for "APSystems OpenAPI"
+## ⚙️ Configuration
+
+1. Go to **Settings** → **Devices & Services**
+2. Click **+ Add Integration**
+3. Search for **APSystems OpenAPI**
 4. Enter your credentials:
    - **App ID**: Your APSystems OpenAPI App ID
    - **App Secret**: Your APSystems OpenAPI App Secret
-   - **System ID**: Your APSystems system ID
+   - **System ID**: Your system ID from EMA portal
 
-### Getting API Credentials
+That's it! Your sensors will be created automatically. ✨
 
-To use this integration, you need to obtain API credentials from APSystems:
+## 📚 Documentation
 
-1. Contact APSystems support or visit their developer portal
-2. Request OpenAPI access credentials
-3. You will receive an App ID and App Secret
-4. Find your System ID in the APSystems EMA portal
+- 📖 **[Quick Start Guide](QUICKSTART.md)** - Get up and running in minutes
+- 🔧 **[Installation Guide](INSTALLATION.md)** - Detailed installation instructions
+- 💡 **[Examples & Usage](EXAMPLES.md)** - Dashboard cards, automations, and more
+- 🏗️ **[Architecture](ARCHITECTURE.md)** - Technical architecture overview
+- 📡 **[API Reference](API.md)** - API documentation for developers
+- 🤝 **[Contributing](CONTRIBUTING.md)** - Help improve the integration
 
-For more information, refer to the [APSystems OpenAPI documentation](https://file.apsystemsema.com:8083/apsystems/resource/openapi/Apsystems_OpenAPI_User_Manual_End_User_EN.pdf).
+## 🎨 Dashboard Examples
 
-## Sensors
+### Simple Entities Card
+```yaml
+type: entities
+title: Solar Power
+entities:
+  - sensor.apsystems_current_power
+  - sensor.apsystems_today_energy
+  - sensor.apsystems_lifetime_energy
+```
 
-The integration creates the following sensors:
+### Power Gauge
+```yaml
+type: gauge
+entity: sensor.apsystems_current_power
+name: Solar Power
+min: 0
+max: 5000
+needle: true
+```
 
-| Sensor | Description | Unit |
-|--------|-------------|------|
-| Current Power | Real-time power generation | W |
-| Today Energy | Energy generated today | kWh |
-| Lifetime Energy | Total energy generated | kWh |
-| Max Power | Maximum power capacity | W |
+See [EXAMPLES.md](EXAMPLES.md) for more dashboard and automation examples!
 
-## Support
+## 🤝 Contributing
 
-For issues, feature requests, or contributions, please visit the [GitHub repository](https://github.com/skamphuis/HomeAssistant.APSystems).
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## License
+### Ways to Contribute
+
+- 🐛 Report bugs
+- 💡 Suggest new features
+- 📝 Improve documentation
+- 🔧 Submit pull requests
+- ⭐ Star the repository
+
+## 🔗 Related Links
+
+- [APSystems OpenAPI Documentation](https://file.apsystemsema.com:8083/apsystems/resource/openapi/Apsystems_OpenAPI_User_Manual_End_User_EN.pdf)
+- [APSystems EMA Portal](https://ema.apsystemsema.com)
+- [Home Assistant](https://www.home-assistant.io)
+- [HACS](https://hacs.xyz)
+
+## ⚠️ Disclaimer
+
+This is an unofficial integration and is not affiliated with or endorsed by APSystems. Use at your own risk.
+
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built for the Home Assistant community
+- Based on APSystems OpenAPI documentation
+- Thanks to all contributors!
+
+---
+
+**Found this useful?** ⭐ Star this repo and share it with others!
+
+**Having issues?** 🐛 [Open an issue](https://github.com/skamphuis/HomeAssistant.APSystems/issues) on GitHub.
