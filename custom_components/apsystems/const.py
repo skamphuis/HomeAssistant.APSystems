@@ -2,6 +2,10 @@
 
 DOMAIN = "apsystems_api"
 
+# Version information
+__version__ = "1.0.0"
+__version_info__ = (1, 0, 0)
+
 # API Configuration
 BASE_URL = "https://api.apsystemsema.com:9282"
 API_VERSION = "v2"

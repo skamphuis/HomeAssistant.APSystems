@@ -9,16 +9,21 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 
-from .const import DOMAIN
+from .const import DOMAIN, __version__
 from .coordinator import APSystemsDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.DEVICE_TRACKER]
 
+# Version information
+__version__ = "1.0.0"
+__version_info__ = (1, 0, 0)
+
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the APSystems component."""
+    _LOGGER.info(f"APSystems API Integration v{__version__} starting up")
     return True
 
 
