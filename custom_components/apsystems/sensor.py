@@ -75,20 +75,27 @@ class APSystemsSystemSensor(CoordinatorEntity, SensorEntity):
         if not self.coordinator.data:
             return None
             
-        system_energy = self.coordinator.data.get("system_energy", {})
-        system_energy_today = self.coordinator.data.get("system_energy_today", {})
-        
-        if self._sensor_type == "system_power":
-            # Get current power from system energy data
-            return float(system_energy.get("power", 0))
-        elif self._sensor_type == "system_energy_today":
-            # Get today's energy
-            return float(system_energy_today.get("energy", 0))
-        elif self._sensor_type == "system_energy_total":
-            # Get total energy
-            return float(system_energy.get("energy", 0))
-        
-        return None
+        try:
+            system_energy = self.coordinator.data.get("system_energy", {})
+            system_energy_today = self.coordinator.data.get("system_energy_today", {})
+            
+            if self._sensor_type == "system_power":
+                # Get current power from system energy data
+                power_value = system_energy.get("power", 0)
+                return float(power_value) if power_value is not None else 0.0
+            elif self._sensor_type == "system_energy_today":
+                # Get today's energy
+                energy_value = system_energy_today.get("energy", 0)
+                return float(energy_value) if energy_value is not None else 0.0
+            elif self._sensor_type == "system_energy_total":
+                # Get total energy
+                energy_value = system_energy.get("energy", 0)
+                return float(energy_value) if energy_value is not None else 0.0
+            
+            return None
+        except (ValueError, TypeError) as e:
+            _LOGGER.warning(f"Error parsing system sensor value for {self._sensor_type}: {e}")
+            return None
 
 
 class APSystemsInverterSensor(CoordinatorEntity, SensorEntity):
@@ -132,17 +139,23 @@ class APSystemsInverterSensor(CoordinatorEntity, SensorEntity):
         if not self.coordinator.data:
             return None
             
-        inverter_data = self.coordinator.data.get("inverter_data", {}).get(self._inverter_id, {})
-        
-        if self._sensor_type == "inverter_power":
-            # Get current power from inverter data
-            return float(inverter_data.get("power", 0))
-        elif self._sensor_type == "inverter_energy_today":
-            # Get today's energy - this would need to be fetched separately
-            # For now, return 0 as we'd need to make additional API calls
-            return 0.0
-        elif self._sensor_type == "inverter_energy_total":
-            # Get total energy
-            return float(inverter_data.get("energy", 0))
-        
-        return None
+        try:
+            inverter_data = self.coordinator.data.get("inverter_data", {}).get(self._inverter_id, {})
+            
+            if self._sensor_type == "inverter_power":
+                # Get current power from inverter data
+                power_value = inverter_data.get("power", 0)
+                return float(power_value) if power_value is not None else 0.0
+            elif self._sensor_type == "inverter_energy_today":
+                # Get today's energy - this would need to be fetched separately
+                # For now, return 0 as we'd need to make additional API calls
+                return 0.0
+            elif self._sensor_type == "inverter_energy_total":
+                # Get total energy
+                energy_value = inverter_data.get("energy", 0)
+                return float(energy_value) if energy_value is not None else 0.0
+            
+            return None
+        except (ValueError, TypeError) as e:
+            _LOGGER.warning(f"Error parsing inverter sensor value for {self._inverter_id} {self._sensor_type}: {e}")
+            return None

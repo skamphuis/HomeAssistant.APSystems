@@ -59,10 +59,28 @@ class APSystemsAPI:
                 response = requests.request(method, url, headers=headers, json=params, timeout=30)
             
             response.raise_for_status()
-            return response.json()
             
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"API request failed: {e}")
+            # Safely parse JSON response
+            try:
+                return response.json()
+            except ValueError as e:
+                return {"code": 5000, "data": {}, "message": f"Invalid JSON response: {e}"}
+            
+        except requests.exceptions.Timeout:
+            return {"code": 6000, "data": {}, "message": "Request timeout"}
+        except requests.exceptions.ConnectionError:
+            return {"code": 6000, "data": {}, "message": "Connection error"}
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 401:
+                return {"code": 2001, "data": {}, "message": "Invalid credentials"}
+            elif e.response.status_code == 403:
+                return {"code": 2002, "data": {}, "message": "Access denied"}
+            elif e.response.status_code == 404:
+                return {"code": 1001, "data": {}, "message": "System not found"}
+            else:
+                return {"code": 5000, "data": {}, "message": f"HTTP error: {e.response.status_code}"}
+        except Exception as e:
+            return {"code": 5000, "data": {}, "message": f"Unexpected error: {e}"}
 
     def get_system_details(self, system_id: str) -> Dict[str, Any]:
         """Get system details."""

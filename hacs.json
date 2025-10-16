@@ -1,0 +1,9 @@
+{
+  "name": "APSystems API",
+  "content_in_root": false,
+  "filename": "apsystems_api",
+  "country": ["US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "BE", "CH", "AT", "SE", "NO", "DK", "FI", "PL", "CZ", "HU", "RO", "BG", "HR", "SI", "SK", "LT", "LV", "EE", "IE", "PT", "GR", "CY", "MT", "LU", "IS", "LI", "MC", "SM", "VA", "AD", "AL", "BA", "BY", "MD", "ME", "MK", "RS", "UA", "XK"],
+  "render_readme": true,
+  "domains": ["sensor", "device_tracker"],
+  "iot_class": "Cloud Polling"
+}

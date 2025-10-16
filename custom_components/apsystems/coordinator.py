@@ -36,33 +36,74 @@ class APSystemsDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> Dict[str, Any]:
         """Update data via library."""
         try:
-            # Get system details
-            system_details = await self.hass.async_add_executor_job(
-                self.api.get_system_details, self.system_id
-            )
+            # Initialize default data structure
+            data = {
+                "system_details": {},
+                "system_energy": {},
+                "system_energy_today": {},
+                "inverters": [],
+                "meters": [],
+                "inverter_data": {},
+                "last_update": datetime.now().isoformat(),
+                "errors": []
+            }
             
-            # Get system summary energy
-            system_energy = await self.hass.async_add_executor_job(
-                self.api.get_system_summary_energy, self.system_id
-            )
+            # Get system details with error handling
+            try:
+                system_details = await self.hass.async_add_executor_job(
+                    self.api.get_system_details, self.system_id
+                )
+                if system_details.get("code") == 0:
+                    data["system_details"] = system_details.get("data", {})
+                else:
+                    _LOGGER.warning(f"System details error: {system_details.get('message', 'Unknown error')}")
+                    data["errors"].append(f"System details: {system_details.get('message', 'Unknown error')}")
+            except Exception as e:
+                _LOGGER.error(f"Failed to get system details: {e}")
+                data["errors"].append(f"System details: {e}")
             
-            # Get system inverters
-            inverters = await self.hass.async_add_executor_job(
-                self.api.get_system_inverters, self.system_id
-            )
+            # Get system summary energy with error handling
+            try:
+                system_energy = await self.hass.async_add_executor_job(
+                    self.api.get_system_summary_energy, self.system_id
+                )
+                if system_energy.get("code") == 0:
+                    data["system_energy"] = system_energy.get("data", {})
+                else:
+                    _LOGGER.warning(f"System energy error: {system_energy.get('message', 'Unknown error')}")
+                    data["errors"].append(f"System energy: {system_energy.get('message', 'Unknown error')}")
+            except Exception as e:
+                _LOGGER.error(f"Failed to get system energy: {e}")
+                data["errors"].append(f"System energy: {e}")
             
-            # Get system meters if available
+            # Get system inverters with error handling
+            try:
+                inverters = await self.hass.async_add_executor_job(
+                    self.api.get_system_inverters, self.system_id
+                )
+                if inverters.get("code") == 0:
+                    data["inverters"] = inverters.get("data", [])
+                else:
+                    _LOGGER.warning(f"Inverters error: {inverters.get('message', 'Unknown error')}")
+                    data["errors"].append(f"Inverters: {inverters.get('message', 'Unknown error')}")
+            except Exception as e:
+                _LOGGER.error(f"Failed to get inverters: {e}")
+                data["errors"].append(f"Inverters: {e}")
+            
+            # Get system meters if available (optional)
             try:
                 meters = await self.hass.async_add_executor_job(
                     self.api.get_system_meters, self.system_id
                 )
-            except Exception:
-                meters = {"data": []}
+                if meters.get("code") == 0:
+                    data["meters"] = meters.get("data", [])
+            except Exception as e:
+                _LOGGER.debug(f"Meters not available: {e}")
+                data["meters"] = []
             
-            # Get inverter data for each inverter
-            inverter_data = {}
-            if inverters.get("data"):
-                for inverter in inverters["data"]:
+            # Get inverter data for each inverter with error handling
+            if data["inverters"]:
+                for inverter in data["inverters"]:
                     inverter_id = inverter.get("uid")
                     if inverter_id:
                         try:
@@ -71,15 +112,19 @@ class APSystemsDataUpdateCoordinator(DataUpdateCoordinator):
                                 self.system_id, 
                                 inverter_id
                             )
-                            inverter_data[inverter_id] = inverter_energy
+                            if inverter_energy.get("code") == 0:
+                                data["inverter_data"][inverter_id] = inverter_energy.get("data", {})
+                            else:
+                                _LOGGER.warning(f"Inverter {inverter_id} energy error: {inverter_energy.get('message', 'Unknown error')}")
+                                data["inverter_data"][inverter_id] = {}
                         except Exception as e:
                             _LOGGER.warning(f"Failed to get energy data for inverter {inverter_id}: {e}")
-                            inverter_data[inverter_id] = {"data": {}}
+                            data["inverter_data"][inverter_id] = {}
             
             # Get today's date for daily energy
             today = datetime.now().strftime("%Y-%m-%d")
             
-            # Get system energy for today
+            # Get system energy for today with error handling
             try:
                 system_energy_today = await self.hass.async_add_executor_job(
                     self.api.get_system_energy_period,
@@ -87,21 +132,29 @@ class APSystemsDataUpdateCoordinator(DataUpdateCoordinator):
                     today,
                     today
                 )
-            except Exception:
-                system_energy_today = {"data": {}}
+                if system_energy_today.get("code") == 0:
+                    data["system_energy_today"] = system_energy_today.get("data", {})
+                else:
+                    _LOGGER.warning(f"Today's energy error: {system_energy_today.get('message', 'Unknown error')}")
+            except Exception as e:
+                _LOGGER.warning(f"Failed to get today's energy: {e}")
+                data["system_energy_today"] = {}
             
-            return {
-                "system_details": system_details.get("data", {}),
-                "system_energy": system_energy.get("data", {}),
-                "system_energy_today": system_energy_today.get("data", {}),
-                "inverters": inverters.get("data", []),
-                "meters": meters.get("data", []),
-                "inverter_data": inverter_data,
-                "last_update": datetime.now().isoformat(),
-            }
+            return data
             
         except Exception as error:
-            raise UpdateFailed(f"Error communicating with API: {error}")
+            _LOGGER.error(f"Critical error in coordinator update: {error}")
+            # Return minimal data structure to prevent crashes
+            return {
+                "system_details": {},
+                "system_energy": {},
+                "system_energy_today": {},
+                "inverters": [],
+                "meters": [],
+                "inverter_data": {},
+                "last_update": datetime.now().isoformat(),
+                "errors": [f"Critical error: {error}"]
+            }
 
     async def get_inverter_energy_today(self, inverter_id: str) -> Dict[str, Any]:
         """Get today's energy data for a specific inverter."""
