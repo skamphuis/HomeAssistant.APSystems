@@ -1,0 +1,6 @@
+{
+  "name": "APSystems OpenAPI",
+  "render_readme": true,
+  "domains": ["sensor"],
+  "homeassistant": "2023.1.0"
+}
