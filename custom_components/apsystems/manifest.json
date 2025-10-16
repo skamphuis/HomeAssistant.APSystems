@@ -1,0 +1,10 @@
+{
+  "domain": "apsystems_api",
+  "name": "APSystems API",
+  "documentation": "https://github.com/yourusername/HomeAssistant.APSystems",
+  "requirements": ["requests>=2.25.0", "cryptography>=3.4.0"],
+  "dependencies": [],
+  "codeowners": ["@yourusername"],
+  "config_flow": true,
+  "version": "1.0.0"
+}

@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "APSystems API Configuration",
+        "description": "Enter your APSystems API credentials and system ID",
+        "data": {
+          "app_id": "App ID",
+          "app_secret": "App Secret",
+          "system_id": "System ID"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to APSystems API",
+      "invalid_auth": "Invalid credentials or system ID",
+      "unknown": "Unknown error occurred"
+    },
+    "abort": {
+      "already_configured": "APSystems API is already configured"
+    }
+  }
+}
